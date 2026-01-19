@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { Config } from '@measured/puck';
 import { Hero, HeroProps } from './blocks/Hero';
 import { VideoHero, VideoHeroProps } from './blocks/VideoHero';
