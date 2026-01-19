@@ -1,0 +1,43 @@
+{
+  "landing-pages": [
+    {
+      "id": "1",
+      "title": "Processo Seletivo 2025",
+      "slug": "processo-seletivo-2025",
+      "status": "published",
+      "createdAt": "2025-01-15T10:00:00Z",
+      "updatedAt": "2025-01-18T14:30:00Z",
+      "publishedAt": "2025-01-16T08:00:00Z",
+      "puckData": {
+        "content": [],
+        "root": { "props": {} }
+      }
+    },
+    {
+      "id": "2",
+      "title": "Vestibular Medicina",
+      "slug": "vestibular-medicina",
+      "status": "draft",
+      "createdAt": "2025-01-10T09:00:00Z",
+      "updatedAt": "2025-01-17T11:00:00Z",
+      "publishedAt": null,
+      "puckData": {
+        "content": [],
+        "root": { "props": {} }
+      }
+    },
+    {
+      "id": "3",
+      "title": "MBA Executivo",
+      "slug": "mba-executivo",
+      "status": "published",
+      "createdAt": "2025-01-05T08:00:00Z",
+      "updatedAt": "2025-01-19T10:00:00Z",
+      "publishedAt": "2025-01-06T12:00:00Z",
+      "puckData": {
+        "content": [],
+        "root": { "props": {} }
+      }
+    }
+  ]
+}
