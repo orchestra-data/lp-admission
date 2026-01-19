@@ -1,5 +1,6 @@
 import type { Config } from '@measured/puck';
 import { Hero, HeroProps } from './blocks/Hero';
+import { VideoHero, VideoHeroProps } from './blocks/VideoHero';
 import { Features, FeaturesProps } from './blocks/Features';
 import { Testimonials, TestimonialsProps } from './blocks/Testimonials';
 import { FAQ, FAQProps } from './blocks/FAQ';
@@ -9,9 +10,22 @@ import { AdmissionForm, AdmissionFormProps } from './blocks/AdmissionForm';
 import { Text, TextProps } from './blocks/Text';
 import { Image, ImageProps } from './blocks/Image';
 import { Spacer, SpacerProps } from './blocks/Spacer';
+import { Stats, StatsProps } from './blocks/Stats';
+import { Countdown, CountdownProps } from './blocks/Countdown';
+import { LogoCloud, LogoCloudProps } from './blocks/LogoCloud';
+
+// Root Props for global theming
+interface RootProps {
+  primaryColor: string;
+  secondaryColor: string;
+  backgroundColor: string;
+  textColor: string;
+  fontFamily: string;
+}
 
 type Components = {
   Hero: HeroProps;
+  VideoHero: VideoHeroProps;
   Features: FeaturesProps;
   Testimonials: TestimonialsProps;
   FAQ: FAQProps;
@@ -21,39 +35,119 @@ type Components = {
   Text: TextProps;
   Image: ImageProps;
   Spacer: SpacerProps;
+  Stats: StatsProps;
+  Countdown: CountdownProps;
+  LogoCloud: LogoCloudProps;
 };
 
-export const puckConfig: Config<Components> = {
+export const puckConfig: Config<Components, RootProps> = {
+  // ========================================
+  // ROOT - Global Theme Configuration
+  // ========================================
+  root: {
+    fields: {
+      primaryColor: {
+        type: 'text',
+        label: 'Cor Primaria (hex)',
+      },
+      secondaryColor: {
+        type: 'text',
+        label: 'Cor Secundaria (hex)',
+      },
+      backgroundColor: {
+        type: 'text',
+        label: 'Cor de Fundo (hex)',
+      },
+      textColor: {
+        type: 'text',
+        label: 'Cor do Texto (hex)',
+      },
+      fontFamily: {
+        type: 'select',
+        label: 'Fonte',
+        options: [
+          { value: 'Inter, sans-serif', label: 'Inter' },
+          { value: 'Roboto, sans-serif', label: 'Roboto' },
+          { value: 'Open Sans, sans-serif', label: 'Open Sans' },
+          { value: 'Montserrat, sans-serif', label: 'Montserrat' },
+          { value: 'Poppins, sans-serif', label: 'Poppins' },
+        ],
+      },
+    },
+    defaultProps: {
+      primaryColor: '#2563EB',
+      secondaryColor: '#EA580C',
+      backgroundColor: '#FFFFFF',
+      textColor: '#1E293B',
+      fontFamily: 'Inter, sans-serif',
+    },
+    render: ({ children, primaryColor, secondaryColor, backgroundColor, textColor, fontFamily }) => {
+      return (
+        <div
+          style={{
+            ['--lp-primary' as string]: primaryColor,
+            ['--lp-secondary' as string]: secondaryColor,
+            ['--lp-background' as string]: backgroundColor,
+            ['--lp-text' as string]: textColor,
+            fontFamily,
+            backgroundColor,
+            color: textColor,
+            minHeight: '100vh',
+          }}
+        >
+          <style>{`
+            :root {
+              --primary: ${primaryColor};
+              --secondary: ${secondaryColor};
+            }
+            .bg-primary { background-color: ${primaryColor} !important; }
+            .text-primary { color: ${primaryColor} !important; }
+            .border-primary { border-color: ${primaryColor} !important; }
+            .bg-secondary { background-color: ${secondaryColor} !important; }
+          `}</style>
+          {children}
+        </div>
+      );
+    },
+  },
+
+  // ========================================
+  // CATEGORIES
+  // ========================================
   categories: {
-    layout: {
-      title: 'Layout',
-      components: ['Hero', 'CTA', 'Spacer'],
+    hero: {
+      title: 'Hero',
+      components: ['Hero', 'VideoHero'],
+    },
+    social: {
+      title: 'Social Proof',
+      components: ['Testimonials', 'Stats', 'LogoCloud'],
     },
     content: {
       title: 'Conteudo',
-      components: ['Features', 'Testimonials', 'FAQ', 'Pricing', 'Text', 'Image'],
+      components: ['Features', 'FAQ', 'Pricing', 'Text', 'Image'],
     },
-    forms: {
-      title: 'Formularios',
-      components: ['AdmissionForm'],
+    conversion: {
+      title: 'Conversao',
+      components: ['CTA', 'Countdown', 'AdmissionForm'],
+    },
+    layout: {
+      title: 'Layout',
+      components: ['Spacer'],
     },
   },
+
+  // ========================================
+  // COMPONENTS
+  // ========================================
   components: {
+    // -------------------- HERO --------------------
     Hero: {
       label: 'Hero Section',
       fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo',
-        },
-        subtitle: {
-          type: 'textarea',
-          label: 'Subtitulo',
-        },
-        backgroundImage: {
-          type: 'text',
-          label: 'URL da Imagem de Fundo',
-        },
+        title: { type: 'text', label: 'Titulo' },
+        subtitle: { type: 'textarea', label: 'Subtitulo' },
+        backgroundImage: { type: 'text', label: 'URL da Imagem de Fundo' },
         backgroundOverlay: {
           type: 'radio',
           label: 'Overlay escuro',
@@ -62,14 +156,8 @@ export const puckConfig: Config<Components> = {
             { value: false, label: 'Nao' },
           ],
         },
-        ctaText: {
-          type: 'text',
-          label: 'Texto do Botao',
-        },
-        ctaLink: {
-          type: 'text',
-          label: 'Link do Botao',
-        },
+        ctaText: { type: 'text', label: 'Texto do Botao' },
+        ctaLink: { type: 'text', label: 'Link do Botao' },
         alignment: {
           type: 'select',
           label: 'Alinhamento',
@@ -91,11 +179,11 @@ export const puckConfig: Config<Components> = {
         },
       },
       defaultProps: {
-        title: 'Bem-vindo a Nossa Instituicao',
-        subtitle: 'Transforme seu futuro com educacao de qualidade',
+        title: 'Transforme sua carreira em 6 meses',
+        subtitle: 'Programa reconhecido pelo MEC com metodologia pratica e 97% de empregabilidade',
         backgroundImage: '',
         backgroundOverlay: true,
-        ctaText: 'Inscreva-se Agora',
+        ctaText: 'Quero MINHA vaga',
         ctaLink: '#form',
         alignment: 'center',
         height: 'large',
@@ -103,33 +191,171 @@ export const puckConfig: Config<Components> = {
       render: Hero,
     },
 
+    VideoHero: {
+      label: 'Hero com Video',
+      fields: {
+        title: { type: 'text', label: 'Titulo' },
+        subtitle: { type: 'textarea', label: 'Subtitulo' },
+        videoUrl: { type: 'text', label: 'URL do Video (YouTube embed)' },
+        thumbnailUrl: { type: 'text', label: 'URL da Thumbnail' },
+        ctaText: { type: 'text', label: 'Texto do CTA' },
+        ctaLink: { type: 'text', label: 'Link do CTA' },
+        secondaryCtaText: { type: 'text', label: 'Texto CTA Secundario' },
+        secondaryCtaLink: { type: 'text', label: 'Link CTA Secundario' },
+        alignment: {
+          type: 'select',
+          label: 'Layout',
+          options: [
+            { value: 'left', label: 'Texto + Video' },
+            { value: 'center', label: 'Centralizado' },
+          ],
+        },
+      },
+      defaultProps: {
+        title: 'Descubra como transformar sua carreira',
+        subtitle: 'Assista ao video e conheca nossa metodologia exclusiva',
+        videoUrl: '',
+        thumbnailUrl: 'https://placehold.co/800x450',
+        ctaText: 'Comecar agora',
+        ctaLink: '#form',
+        secondaryCtaText: '',
+        secondaryCtaLink: '',
+        alignment: 'left',
+      },
+      render: VideoHero,
+    },
+
+    // -------------------- SOCIAL PROOF --------------------
+    Stats: {
+      label: 'Numeros/Estatisticas',
+      fields: {
+        title: { type: 'text', label: 'Titulo (opcional)' },
+        stats: {
+          type: 'array',
+          label: 'Estatisticas',
+          arrayFields: {
+            value: { type: 'text', label: 'Valor' },
+            label: { type: 'text', label: 'Label' },
+            prefix: { type: 'text', label: 'Prefixo (ex: +, R$)' },
+            suffix: { type: 'text', label: 'Sufixo (ex: %, +)' },
+          },
+        },
+        columns: {
+          type: 'select',
+          label: 'Colunas',
+          options: [
+            { value: '2', label: '2 Colunas' },
+            { value: '3', label: '3 Colunas' },
+            { value: '4', label: '4 Colunas' },
+          ],
+        },
+        backgroundColor: {
+          type: 'select',
+          label: 'Cor de Fundo',
+          options: [
+            { value: 'white', label: 'Branco' },
+            { value: 'muted', label: 'Cinza' },
+            { value: 'primary', label: 'Primaria' },
+            { value: 'dark', label: 'Escuro' },
+          ],
+        },
+      },
+      defaultProps: {
+        title: '',
+        stats: [
+          { value: '12.000', label: 'Alunos formados', prefix: '+', suffix: '' },
+          { value: '97', label: 'Empregabilidade', prefix: '', suffix: '%' },
+          { value: '1', label: 'Ranking Brasil', prefix: '#', suffix: '' },
+        ],
+        columns: '3',
+        backgroundColor: 'primary',
+      },
+      render: Stats,
+    },
+
+    Testimonials: {
+      label: 'Depoimentos',
+      fields: {
+        title: { type: 'text', label: 'Titulo' },
+        testimonials: {
+          type: 'array',
+          label: 'Depoimentos',
+          arrayFields: {
+            name: { type: 'text', label: 'Nome' },
+            role: { type: 'text', label: 'Cargo/Curso' },
+            quote: { type: 'textarea', label: 'Depoimento' },
+            avatar: { type: 'text', label: 'URL do Avatar' },
+          },
+        },
+      },
+      defaultProps: {
+        title: 'O que nossos alunos dizem',
+        testimonials: [
+          {
+            name: 'Maria Silva',
+            role: 'MBA 2023 - Gerente na Empresa X',
+            quote: 'Estava estagnada ha 3 anos. O curso me deu as ferramentas e rede de contatos que precisava. Em 6 meses, fui promovida com 40% de aumento.',
+            avatar: '',
+          },
+          {
+            name: 'Joao Santos',
+            role: 'Pos-Graduacao 2023',
+            quote: 'A metodologia pratica fez toda diferenca. Consegui aplicar o conhecimento imediatamente no trabalho.',
+            avatar: '',
+          },
+        ],
+      },
+      render: Testimonials,
+    },
+
+    LogoCloud: {
+      label: 'Logos de Parceiros',
+      fields: {
+        title: { type: 'text', label: 'Titulo (opcional)' },
+        subtitle: { type: 'text', label: 'Subtitulo (opcional)' },
+        logos: {
+          type: 'array',
+          label: 'Logos',
+          arrayFields: {
+            name: { type: 'text', label: 'Nome da Empresa' },
+            imageUrl: { type: 'text', label: 'URL do Logo' },
+          },
+        },
+        grayscale: {
+          type: 'radio',
+          label: 'Escala de Cinza',
+          options: [
+            { value: true, label: 'Sim' },
+            { value: false, label: 'Nao' },
+          ],
+        },
+      },
+      defaultProps: {
+        title: 'Empresas que contratam nossos alunos',
+        subtitle: '',
+        logos: [
+          { name: 'Empresa 1', imageUrl: 'https://placehold.co/150x50?text=Logo1' },
+          { name: 'Empresa 2', imageUrl: 'https://placehold.co/150x50?text=Logo2' },
+          { name: 'Empresa 3', imageUrl: 'https://placehold.co/150x50?text=Logo3' },
+        ],
+        grayscale: true,
+      },
+      render: LogoCloud,
+    },
+
+    // -------------------- CONTENT --------------------
     Features: {
       label: 'Features/Beneficios',
       fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo da Secao',
-        },
-        subtitle: {
-          type: 'textarea',
-          label: 'Subtitulo',
-        },
+        title: { type: 'text', label: 'Titulo da Secao' },
+        subtitle: { type: 'textarea', label: 'Subtitulo' },
         features: {
           type: 'array',
           label: 'Features',
           arrayFields: {
-            icon: {
-              type: 'text',
-              label: 'Icone (nome do Lucide)',
-            },
-            title: {
-              type: 'text',
-              label: 'Titulo',
-            },
-            description: {
-              type: 'textarea',
-              label: 'Descricao',
-            },
+            icon: { type: 'text', label: 'Icone (GraduationCap, BookOpen, Award, Star, Users, Zap, Shield, Heart, Target, Lightbulb, Trophy, Rocket)' },
+            title: { type: 'text', label: 'Titulo' },
+            description: { type: 'textarea', label: 'Descricao' },
           },
         },
         columns: {
@@ -146,88 +372,34 @@ export const puckConfig: Config<Components> = {
         title: 'Por que nos escolher?',
         subtitle: 'Descubra os diferenciais que fazem da nossa instituicao a melhor escolha',
         features: [
-          { icon: 'GraduationCap', title: 'Corpo Docente', description: 'Professores qualificados e experientes' },
-          { icon: 'BookOpen', title: 'Metodologia', description: 'Ensino pratico e dinamico' },
-          { icon: 'Award', title: 'Certificacao', description: 'Diploma reconhecido pelo MEC' },
+          { icon: 'GraduationCap', title: 'Corpo Docente', description: 'Professores com experiencia de mercado' },
+          { icon: 'Target', title: 'Metodologia Pratica', description: 'Aprenda fazendo com projetos reais' },
+          { icon: 'Award', title: 'Reconhecimento MEC', description: 'Diploma reconhecido nacionalmente' },
         ],
         columns: '3',
       },
       render: Features,
     },
 
-    Testimonials: {
-      label: 'Depoimentos',
-      fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo',
-        },
-        testimonials: {
-          type: 'array',
-          label: 'Depoimentos',
-          arrayFields: {
-            name: {
-              type: 'text',
-              label: 'Nome',
-            },
-            role: {
-              type: 'text',
-              label: 'Cargo/Curso',
-            },
-            quote: {
-              type: 'textarea',
-              label: 'Depoimento',
-            },
-            avatar: {
-              type: 'text',
-              label: 'URL do Avatar',
-            },
-          },
-        },
-      },
-      defaultProps: {
-        title: 'O que nossos alunos dizem',
-        testimonials: [
-          {
-            name: 'Maria Silva',
-            role: 'Formada em Administracao',
-            quote: 'A melhor decisao da minha carreira foi estudar aqui.',
-            avatar: '',
-          },
-        ],
-      },
-      render: Testimonials,
-    },
-
     FAQ: {
       label: 'Perguntas Frequentes',
       fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo',
-        },
+        title: { type: 'text', label: 'Titulo' },
         items: {
           type: 'array',
           label: 'Perguntas',
           arrayFields: {
-            question: {
-              type: 'text',
-              label: 'Pergunta',
-            },
-            answer: {
-              type: 'textarea',
-              label: 'Resposta',
-            },
+            question: { type: 'text', label: 'Pergunta' },
+            answer: { type: 'textarea', label: 'Resposta' },
           },
         },
       },
       defaultProps: {
         title: 'Perguntas Frequentes',
         items: [
-          {
-            question: 'Quais formas de pagamento sao aceitas?',
-            answer: 'Aceitamos cartao de credito, boleto bancario e PIX.',
-          },
+          { question: 'Qual o valor do investimento?', answer: 'Entre em contato para conhecer nossas opcoes de pagamento e bolsas disponiveis.' },
+          { question: 'Qual a duracao do curso?', answer: 'O curso tem duracao de 12 meses, com aulas semanais.' },
+          { question: 'O diploma e reconhecido?', answer: 'Sim, somos reconhecidos pelo MEC e nosso diploma tem validade nacional.' },
         ],
       },
       render: FAQ,
@@ -236,34 +408,16 @@ export const puckConfig: Config<Components> = {
     Pricing: {
       label: 'Precos/Planos',
       fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo',
-        },
-        subtitle: {
-          type: 'textarea',
-          label: 'Subtitulo',
-        },
+        title: { type: 'text', label: 'Titulo' },
+        subtitle: { type: 'textarea', label: 'Subtitulo' },
         plans: {
           type: 'array',
           label: 'Planos',
           arrayFields: {
-            name: {
-              type: 'text',
-              label: 'Nome do Plano',
-            },
-            price: {
-              type: 'text',
-              label: 'Preco',
-            },
-            period: {
-              type: 'text',
-              label: 'Periodo',
-            },
-            features: {
-              type: 'textarea',
-              label: 'Features (uma por linha)',
-            },
+            name: { type: 'text', label: 'Nome' },
+            price: { type: 'text', label: 'Preco' },
+            period: { type: 'text', label: 'Periodo' },
+            features: { type: 'textarea', label: 'Features (uma por linha)' },
             highlighted: {
               type: 'radio',
               label: 'Destacado',
@@ -272,120 +426,39 @@ export const puckConfig: Config<Components> = {
                 { value: false, label: 'Nao' },
               ],
             },
-            ctaText: {
-              type: 'text',
-              label: 'Texto do Botao',
-            },
+            ctaText: { type: 'text', label: 'Texto do Botao' },
           },
         },
       },
       defaultProps: {
-        title: 'Nossos Planos',
-        subtitle: 'Escolha o plano ideal para voce',
+        title: 'Investimento',
+        subtitle: 'Escolha a melhor opcao para voce',
         plans: [
           {
-            name: 'Basico',
-            price: 'R$ 199',
-            period: '/mes',
-            features: 'Acesso ao curso\nMaterial didatico\nCertificado',
+            name: 'A Vista',
+            price: 'R$ 9.990',
+            period: '',
+            features: '15% de desconto\nMaterial incluso\nCertificado',
             highlighted: false,
-            ctaText: 'Escolher Plano',
+            ctaText: 'Escolher',
+          },
+          {
+            name: 'Parcelado',
+            price: 'R$ 599',
+            period: '/mes',
+            features: '18x sem juros\nMaterial incluso\nCertificado',
+            highlighted: true,
+            ctaText: 'Escolher',
           },
         ],
       },
       render: Pricing,
     },
 
-    CTA: {
-      label: 'Call to Action',
-      fields: {
-        title: {
-          type: 'text',
-          label: 'Titulo',
-        },
-        description: {
-          type: 'textarea',
-          label: 'Descricao',
-        },
-        buttonText: {
-          type: 'text',
-          label: 'Texto do Botao',
-        },
-        buttonLink: {
-          type: 'text',
-          label: 'Link',
-        },
-        variant: {
-          type: 'select',
-          label: 'Estilo',
-          options: [
-            { value: 'primary', label: 'Primario' },
-            { value: 'secondary', label: 'Secundario' },
-            { value: 'gradient', label: 'Gradiente' },
-          ],
-        },
-      },
-      defaultProps: {
-        title: 'Pronto para comecar?',
-        description: 'Inscreva-se agora e de o primeiro passo para o seu futuro.',
-        buttonText: 'Quero me inscrever',
-        buttonLink: '#form',
-        variant: 'primary',
-      },
-      render: CTA,
-    },
-
-    AdmissionForm: {
-      label: 'Formulario de Admission',
-      fields: {
-        processId: {
-          type: 'text',
-          label: 'ID do Processo (Orchestra)',
-        },
-        title: {
-          type: 'text',
-          label: 'Titulo (opcional)',
-        },
-        description: {
-          type: 'textarea',
-          label: 'Descricao (opcional)',
-        },
-        backgroundColor: {
-          type: 'select',
-          label: 'Cor de Fundo',
-          options: [
-            { value: 'white', label: 'Branco' },
-            { value: 'muted', label: 'Cinza Claro' },
-            { value: 'primary', label: 'Cor Primaria' },
-          ],
-        },
-        padding: {
-          type: 'select',
-          label: 'Espacamento',
-          options: [
-            { value: 'sm', label: 'Pequeno' },
-            { value: 'md', label: 'Medio' },
-            { value: 'lg', label: 'Grande' },
-          ],
-        },
-      },
-      defaultProps: {
-        processId: '',
-        title: 'Inscreva-se Agora',
-        description: 'Preencha o formulario abaixo e entraremos em contato.',
-        backgroundColor: 'muted',
-        padding: 'lg',
-      },
-      render: AdmissionForm,
-    },
-
     Text: {
       label: 'Texto',
       fields: {
-        content: {
-          type: 'textarea',
-          label: 'Conteudo',
-        },
+        content: { type: 'textarea', label: 'Conteudo' },
         align: {
           type: 'select',
           label: 'Alinhamento',
@@ -417,14 +490,8 @@ export const puckConfig: Config<Components> = {
     Image: {
       label: 'Imagem',
       fields: {
-        src: {
-          type: 'text',
-          label: 'URL da Imagem',
-        },
-        alt: {
-          type: 'text',
-          label: 'Texto Alternativo',
-        },
+        src: { type: 'text', label: 'URL da Imagem' },
+        alt: { type: 'text', label: 'Texto Alternativo' },
         width: {
           type: 'select',
           label: 'Largura',
@@ -452,6 +519,101 @@ export const puckConfig: Config<Components> = {
       render: Image,
     },
 
+    // -------------------- CONVERSION --------------------
+    CTA: {
+      label: 'Call to Action',
+      fields: {
+        title: { type: 'text', label: 'Titulo' },
+        description: { type: 'textarea', label: 'Descricao' },
+        buttonText: { type: 'text', label: 'Texto do Botao' },
+        buttonLink: { type: 'text', label: 'Link' },
+        variant: {
+          type: 'select',
+          label: 'Estilo',
+          options: [
+            { value: 'primary', label: 'Primario' },
+            { value: 'secondary', label: 'Secundario' },
+            { value: 'gradient', label: 'Gradiente' },
+          ],
+        },
+      },
+      defaultProps: {
+        title: 'Pronto para transformar sua carreira?',
+        description: 'Vagas limitadas para a proxima turma. Garanta a sua agora!',
+        buttonText: 'Quero MINHA vaga',
+        buttonLink: '#form',
+        variant: 'gradient',
+      },
+      render: CTA,
+    },
+
+    Countdown: {
+      label: 'Countdown/Urgencia',
+      fields: {
+        title: { type: 'text', label: 'Titulo' },
+        description: { type: 'textarea', label: 'Descricao' },
+        targetDate: { type: 'text', label: 'Data Alvo (YYYY-MM-DD)' },
+        ctaText: { type: 'text', label: 'Texto do Botao' },
+        ctaLink: { type: 'text', label: 'Link' },
+        backgroundColor: {
+          type: 'select',
+          label: 'Cor de Fundo',
+          options: [
+            { value: 'white', label: 'Branco' },
+            { value: 'muted', label: 'Cinza' },
+            { value: 'primary', label: 'Primaria' },
+            { value: 'gradient', label: 'Gradiente' },
+            { value: 'dark', label: 'Escuro' },
+          ],
+        },
+      },
+      defaultProps: {
+        title: 'Inscricoes encerram em breve!',
+        description: 'Ultimas vagas com desconto de 15%',
+        targetDate: '2026-02-28',
+        ctaText: 'Garantir MINHA vaga agora',
+        ctaLink: '#form',
+        backgroundColor: 'gradient',
+      },
+      render: Countdown,
+    },
+
+    AdmissionForm: {
+      label: 'Formulario de Admission',
+      fields: {
+        processId: { type: 'text', label: 'ID do Processo (Orchestra)' },
+        title: { type: 'text', label: 'Titulo (opcional)' },
+        description: { type: 'textarea', label: 'Descricao (opcional)' },
+        backgroundColor: {
+          type: 'select',
+          label: 'Cor de Fundo',
+          options: [
+            { value: 'white', label: 'Branco' },
+            { value: 'muted', label: 'Cinza Claro' },
+            { value: 'primary', label: 'Cor Primaria' },
+          ],
+        },
+        padding: {
+          type: 'select',
+          label: 'Espacamento',
+          options: [
+            { value: 'sm', label: 'Pequeno' },
+            { value: 'md', label: 'Medio' },
+            { value: 'lg', label: 'Grande' },
+          ],
+        },
+      },
+      defaultProps: {
+        processId: '',
+        title: 'Garanta sua vaga na proxima turma',
+        description: 'Preencha o formulario e receba mais informacoes',
+        backgroundColor: 'muted',
+        padding: 'lg',
+      },
+      render: AdmissionForm,
+    },
+
+    // -------------------- LAYOUT --------------------
     Spacer: {
       label: 'Espacador',
       fields: {
