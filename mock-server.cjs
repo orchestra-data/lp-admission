@@ -1,6 +1,83 @@
 const http = require('http');
 const url = require('url');
 
+// Template de Admissao para demonstracao
+const admissionTemplateData = {
+  root: {
+    props: {
+      primaryColor: '#3B9EEB',
+      secondaryColor: '#10B981',
+      backgroundColor: '#F8FAFC',
+      textColor: '#1E293B',
+      fontFamily: 'Inter, sans-serif',
+    },
+  },
+  content: [
+    {
+      type: 'Hero',
+      props: {
+        id: 'hero-1',
+        title: 'Processo Seletivo 2026',
+        subtitle: 'Inscricoes abertas para o primeiro semestre. De o primeiro passo para transformar sua carreira.',
+        backgroundImage: '',
+        backgroundColor: '#3B9EEB',
+        textColor: '#FFFFFF',
+        buttonColor: '#10B981',
+        backgroundOverlay: false,
+        ctaText: 'Iniciar Inscricao',
+        ctaLink: '#form',
+        alignment: 'center',
+        height: 'large',
+      },
+    },
+    {
+      type: 'Stats',
+      props: {
+        id: 'stats-1',
+        title: '',
+        stats: [
+          { value: '15.000', label: 'Alunos formados', prefix: '+', suffix: '' },
+          { value: '98', label: 'Empregabilidade', prefix: '', suffix: '%' },
+          { value: '45', label: 'Anos de historia', prefix: '', suffix: '' },
+          { value: 'A', label: 'Nota MEC', prefix: '', suffix: '' },
+        ],
+        columns: '4',
+        customBgColor: '#1E3A5F',
+        customTextColor: '#FFFFFF',
+      },
+    },
+    {
+      type: 'Features',
+      props: {
+        id: 'features-1',
+        title: 'Por que escolher nossa instituicao?',
+        subtitle: 'Oferecemos formacao completa para os desafios do mercado',
+        features: [
+          { icon: 'GraduationCap', title: 'Excelencia Academica', description: 'Corpo docente qualificado com experiencia de mercado' },
+          { icon: 'Target', title: 'Foco no Mercado', description: 'Curriculo atualizado com as demandas das empresas' },
+          { icon: 'Award', title: 'Reconhecimento', description: 'Diploma valorizado e reconhecido pelo MEC' },
+        ],
+        columns: '3',
+      },
+    },
+    {
+      type: 'AdmissionForm',
+      props: {
+        id: 'form-1',
+        mockMode: true,
+        processId: '',
+        institutionName: 'Universidade Orchestra',
+        title: 'Faca sua Inscricao',
+        description: 'Preencha o formulario para iniciar seu processo de admissao.',
+        backgroundColor: 'muted',
+        padding: 'lg',
+        accentColor: '#3B9EEB',
+        buttonColor: '#10B981',
+      },
+    },
+  ],
+};
+
 const landingPages = [
   {
     id: '1',
@@ -9,9 +86,9 @@ const landingPages = [
     name: 'Processo Seletivo 2025',
     slug: 'processo-seletivo-2025',
     description: 'Landing page para o processo seletivo 2025',
-    puckData: { content: [], root: { props: {} } },
-    seoTitle: 'Processo Seletivo 2025',
-    seoDescription: 'Inscreva-se no processo seletivo',
+    puckData: admissionTemplateData,
+    seoTitle: 'Processo Seletivo 2025 - Universidade Orchestra',
+    seoDescription: 'Inscreva-se no processo seletivo e transforme sua carreira',
     status: 'published',
     publishedAt: '2025-01-16T08:00:00Z',
     formConfig: { enabled: true, notificationEmails: ['admin@test.com'] },
@@ -239,13 +316,69 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET /public/lp/:slug - Public landing page by slug
+  const publicSlugMatch = pathname.match(/^\/public\/lp\/([^\/]+)$/);
+  if (publicSlugMatch && req.method === 'GET') {
+    const slug = publicSlugMatch[1];
+    const page = landingPages.find(p => p.slug === slug && p.status === 'published');
+    if (page) {
+      res.writeHead(200);
+      res.end(JSON.stringify(page));
+    } else {
+      res.writeHead(404);
+      res.end(JSON.stringify({ error: 'Page not found' }));
+    }
+    return;
+  }
+
+  // POST /public/lp/:slug/view - Track page view
+  const viewMatch = pathname.match(/^\/public\/lp\/([^\/]+)\/view$/);
+  if (viewMatch && req.method === 'POST') {
+    const slug = viewMatch[1];
+    const pageIndex = landingPages.findIndex(p => p.slug === slug);
+    if (pageIndex !== -1) {
+      landingPages[pageIndex].viewsCount++;
+      res.writeHead(200);
+      res.end(JSON.stringify({ success: true }));
+    } else {
+      res.writeHead(404);
+      res.end(JSON.stringify({ error: 'Not found' }));
+    }
+    return;
+  }
+
+  // POST /public/applications - Submit form (mock)
+  if (pathname === '/public/applications' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const input = JSON.parse(body);
+      console.log('New application received:', input);
+
+      // Update submission count for the landing page
+      const pageIndex = landingPages.findIndex(p => p.id === input.processId);
+      if (pageIndex !== -1) {
+        landingPages[pageIndex].submissionsCount++;
+      }
+
+      res.writeHead(200);
+      res.end(JSON.stringify({
+        success: true,
+        applicationId: 'APP-' + Date.now().toString(36).toUpperCase(),
+        message: 'Inscricao recebida com sucesso!'
+      }));
+    });
+    return;
+  }
+
   res.writeHead(404);
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
 server.listen(3080, () => {
   console.log('Mock API server running on http://localhost:3080');
-  console.log('Endpoints:');
+  console.log('');
+  console.log('Admin Endpoints:');
   console.log('  GET    /landing-pages');
   console.log('  GET    /landing-pages/:id');
   console.log('  POST   /landing-pages');
@@ -254,4 +387,9 @@ server.listen(3080, () => {
   console.log('  POST   /landing-pages/:id/publish');
   console.log('  POST   /landing-pages/:id/unpublish');
   console.log('  POST   /landing-pages/:id/duplicate');
+  console.log('');
+  console.log('Public Endpoints (Orchestra pattern):');
+  console.log('  GET    /public/lp/:slug        - View published landing page');
+  console.log('  POST   /public/lp/:slug/view   - Track page view');
+  console.log('  POST   /public/applications    - Submit admission form');
 });

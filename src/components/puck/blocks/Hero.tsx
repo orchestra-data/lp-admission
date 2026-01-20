@@ -5,6 +5,9 @@ export interface HeroProps {
   title: string;
   subtitle: string;
   backgroundImage?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  buttonColor?: string;
   backgroundOverlay?: boolean;
   ctaText: string;
   ctaLink: string;
@@ -29,12 +32,19 @@ export function Hero({
   title,
   subtitle,
   backgroundImage,
+  backgroundColor,
+  textColor,
+  buttonColor,
   backgroundOverlay = true,
   ctaText,
   ctaLink,
   alignment,
   height,
 }: HeroProps) {
+  const hasCustomBg = backgroundColor && backgroundColor !== '';
+  const hasCustomText = textColor && textColor !== '';
+  const hasCustomButton = buttonColor && buttonColor !== '';
+
   return (
     <section
       className={cn(
@@ -44,6 +54,7 @@ export function Hero({
       )}
       style={{
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+        backgroundColor: !backgroundImage && hasCustomBg ? backgroundColor : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -61,10 +72,10 @@ export function Hero({
         )}
       >
         <h1
-          className={cn(
-            'text-4xl md:text-5xl lg:text-6xl font-bold mb-6',
-            backgroundImage ? 'text-white' : 'text-foreground'
-          )}
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+          style={{
+            color: hasCustomText ? textColor : (backgroundImage || hasCustomBg ? '#FFFFFF' : undefined),
+          }}
         >
           {title}
         </h1>
@@ -73,16 +84,26 @@ export function Hero({
           <p
             className={cn(
               'text-lg md:text-xl mb-8 max-w-2xl',
-              backgroundImage ? 'text-white/90' : 'text-muted-foreground',
               alignment === 'center' && 'mx-auto'
             )}
+            style={{
+              color: hasCustomText ? textColor : (backgroundImage || hasCustomBg ? 'rgba(255,255,255,0.9)' : undefined),
+              opacity: hasCustomText ? 0.9 : undefined,
+            }}
           >
             {subtitle}
           </p>
         )}
 
         {ctaText && (
-          <Button size="lg" asChild>
+          <Button
+            size="lg"
+            asChild
+            style={{
+              backgroundColor: hasCustomButton ? buttonColor : undefined,
+              borderColor: hasCustomButton ? buttonColor : undefined,
+            }}
+          >
             <a href={ctaLink}>{ctaText}</a>
           </Button>
         )}

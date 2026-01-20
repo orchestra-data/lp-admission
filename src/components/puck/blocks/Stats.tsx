@@ -11,15 +11,9 @@ export interface StatsProps {
   title?: string;
   stats: Stat[];
   columns: '2' | '3' | '4';
-  backgroundColor: 'white' | 'muted' | 'primary' | 'dark';
+  customBgColor?: string;
+  customTextColor?: string;
 }
-
-const bgClasses = {
-  white: 'bg-background text-foreground',
-  muted: 'bg-muted/30 text-foreground',
-  primary: 'bg-primary text-primary-foreground',
-  dark: 'bg-slate-900 text-white',
-};
 
 const columnClasses = {
   '2': 'md:grid-cols-2',
@@ -27,9 +21,18 @@ const columnClasses = {
   '4': 'md:grid-cols-2 lg:grid-cols-4',
 };
 
-export function Stats({ title, stats, columns, backgroundColor }: StatsProps) {
+export function Stats({ title, stats, columns, customBgColor, customTextColor }: StatsProps) {
+  const bgColor = customBgColor || '#2563EB';
+  const textColor = customTextColor || '#FFFFFF';
+
   return (
-    <section className={cn('py-16 px-4', bgClasses[backgroundColor])}>
+    <section
+      className="py-16 px-4"
+      style={{
+        backgroundColor: bgColor,
+        color: textColor,
+      }}
+    >
       <div className="max-w-6xl mx-auto">
         {title && (
           <h2 className="text-3xl font-bold text-center mb-12">{title}</h2>
@@ -43,12 +46,7 @@ export function Stats({ title, stats, columns, backgroundColor }: StatsProps) {
                 {stat.value}
                 {stat.suffix}
               </div>
-              <div className={cn(
-                'text-lg',
-                backgroundColor === 'primary' || backgroundColor === 'dark'
-                  ? 'opacity-80'
-                  : 'text-muted-foreground'
-              )}>
+              <div className="text-lg" style={{ opacity: 0.85 }}>
                 {stat.label}
               </div>
             </div>

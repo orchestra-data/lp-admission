@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
 
@@ -9,16 +8,10 @@ export interface CountdownProps {
   targetDate: string;
   ctaText: string;
   ctaLink: string;
-  backgroundColor: 'white' | 'muted' | 'primary' | 'gradient' | 'dark';
+  backgroundColor?: string;
+  textColor?: string;
+  buttonColor?: string;
 }
-
-const bgClasses = {
-  white: 'bg-background text-foreground',
-  muted: 'bg-muted/30 text-foreground',
-  primary: 'bg-primary text-primary-foreground',
-  gradient: 'bg-gradient-to-r from-primary to-blue-600 text-white',
-  dark: 'bg-slate-900 text-white',
-};
 
 interface TimeLeft {
   days: number;
@@ -34,7 +27,13 @@ export function Countdown({
   ctaText,
   ctaLink,
   backgroundColor,
+  textColor,
+  buttonColor,
 }: CountdownProps) {
+  const bgColor = backgroundColor || '#7C3AED';
+  const txtColor = textColor || '#FFFFFF';
+  const btnColor = buttonColor || '#EA580C';
+
   const [timeLeft, setTimeLeft] = React.useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -65,12 +64,8 @@ export function Countdown({
   const TimeBox = ({ value, label }: { value: number; label: string }) => (
     <div className="flex flex-col items-center">
       <div
-        className={cn(
-          'w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-lg text-2xl md:text-3xl font-bold',
-          backgroundColor === 'primary' || backgroundColor === 'gradient' || backgroundColor === 'dark'
-            ? 'bg-white/20'
-            : 'bg-primary text-primary-foreground'
-        )}
+        className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-lg text-2xl md:text-3xl font-bold"
+        style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
       >
         {String(value).padStart(2, '0')}
       </div>
@@ -79,7 +74,13 @@ export function Countdown({
   );
 
   return (
-    <section className={cn('py-16 px-4', bgClasses[backgroundColor])}>
+    <section
+      className="py-16 px-4"
+      style={{
+        backgroundColor: bgColor,
+        color: txtColor,
+      }}
+    >
       <div className="max-w-4xl mx-auto text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Clock className="h-6 w-6" />
@@ -101,8 +102,12 @@ export function Countdown({
 
         <Button
           size="lg"
-          variant={backgroundColor === 'primary' || backgroundColor === 'gradient' ? 'secondary' : 'default'}
           asChild
+          style={{
+            backgroundColor: btnColor,
+            borderColor: btnColor,
+            color: '#FFFFFF',
+          }}
         >
           <a href={ctaLink}>{ctaText}</a>
         </Button>

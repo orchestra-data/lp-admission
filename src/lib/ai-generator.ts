@@ -1,5 +1,5 @@
 import type { Data } from '@measured/puck';
-import { templates } from './templates';
+import { templates, prepareTemplateData } from './templates';
 
 // Types for AI generation
 export interface GenerationPrompt {
@@ -255,7 +255,7 @@ export function generateLandingPage(prompt: GenerationPrompt): GenerationResult 
   baseTemplate.content = content;
 
   return {
-    data: baseTemplate,
+    data: prepareTemplateData(baseTemplate),
     suggestions,
   };
 }

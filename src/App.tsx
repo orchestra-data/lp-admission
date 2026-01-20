@@ -35,9 +35,9 @@ function App({ institution, apiBaseUrl = '/api' }: AppProps) {
           element={<LandingPagePreview apiBaseUrl={apiBaseUrl} />}
         />
 
-        {/* Public Routes */}
+        {/* Public Routes - Seguindo padrao Orchestra /apply/:slug */}
         <Route
-          path="/lp/:slug"
+          path="/apply/:slug"
           element={<LandingPagePublic apiBaseUrl={apiBaseUrl} />}
         />
 

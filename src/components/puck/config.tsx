@@ -14,6 +14,7 @@ import { Spacer, SpacerProps } from './blocks/Spacer';
 import { Stats, StatsProps } from './blocks/Stats';
 import { Countdown, CountdownProps } from './blocks/Countdown';
 import { LogoCloud, LogoCloudProps } from './blocks/LogoCloud';
+import { PuckColorField } from '@/components/ui/color-picker';
 
 // Root Props for global theming
 interface RootProps {
@@ -48,20 +49,24 @@ export const puckConfig: Config<Components, RootProps> = {
   root: {
     fields: {
       primaryColor: {
-        type: 'text',
-        label: 'Cor Primaria (hex)',
+        type: 'custom',
+        label: 'Cor Primaria',
+        render: PuckColorField,
       },
       secondaryColor: {
-        type: 'text',
-        label: 'Cor Secundaria (hex)',
+        type: 'custom',
+        label: 'Cor Secundaria',
+        render: PuckColorField,
       },
       backgroundColor: {
-        type: 'text',
-        label: 'Cor de Fundo (hex)',
+        type: 'custom',
+        label: 'Cor de Fundo',
+        render: PuckColorField,
       },
       textColor: {
-        type: 'text',
-        label: 'Cor do Texto (hex)',
+        type: 'custom',
+        label: 'Cor do Texto',
+        render: PuckColorField,
       },
       fontFamily: {
         type: 'select',
@@ -149,6 +154,21 @@ export const puckConfig: Config<Components, RootProps> = {
         title: { type: 'text', label: 'Titulo' },
         subtitle: { type: 'textarea', label: 'Subtitulo' },
         backgroundImage: { type: 'text', label: 'URL da Imagem de Fundo' },
+        backgroundColor: {
+          type: 'custom',
+          label: 'Cor de Fundo',
+          render: PuckColorField,
+        },
+        textColor: {
+          type: 'custom',
+          label: 'Cor do Texto',
+          render: PuckColorField,
+        },
+        buttonColor: {
+          type: 'custom',
+          label: 'Cor do Botao',
+          render: PuckColorField,
+        },
         backgroundOverlay: {
           type: 'radio',
           label: 'Overlay escuro',
@@ -183,6 +203,9 @@ export const puckConfig: Config<Components, RootProps> = {
         title: 'Transforme sua carreira em 6 meses',
         subtitle: 'Programa reconhecido pelo MEC com metodologia pratica e 97% de empregabilidade',
         backgroundImage: '',
+        backgroundColor: '',
+        textColor: '',
+        buttonColor: '',
         backgroundOverlay: true,
         ctaText: 'Quero MINHA vaga',
         ctaLink: '#form',
@@ -250,15 +273,15 @@ export const puckConfig: Config<Components, RootProps> = {
             { value: '4', label: '4 Colunas' },
           ],
         },
-        backgroundColor: {
-          type: 'select',
-          label: 'Cor de Fundo',
-          options: [
-            { value: 'white', label: 'Branco' },
-            { value: 'muted', label: 'Cinza' },
-            { value: 'primary', label: 'Primaria' },
-            { value: 'dark', label: 'Escuro' },
-          ],
+        customBgColor: {
+          type: 'custom',
+          label: 'Cor de Fundo Personalizada',
+          render: PuckColorField,
+        },
+        customTextColor: {
+          type: 'custom',
+          label: 'Cor do Texto',
+          render: PuckColorField,
         },
       },
       defaultProps: {
@@ -269,7 +292,8 @@ export const puckConfig: Config<Components, RootProps> = {
           { value: '1', label: 'Ranking Brasil', prefix: '#', suffix: '' },
         ],
         columns: '3',
-        backgroundColor: 'primary',
+        customBgColor: '#2563EB',
+        customTextColor: '#FFFFFF',
       },
       render: Stats,
     },
@@ -528,14 +552,20 @@ export const puckConfig: Config<Components, RootProps> = {
         description: { type: 'textarea', label: 'Descricao' },
         buttonText: { type: 'text', label: 'Texto do Botao' },
         buttonLink: { type: 'text', label: 'Link' },
-        variant: {
-          type: 'select',
-          label: 'Estilo',
-          options: [
-            { value: 'primary', label: 'Primario' },
-            { value: 'secondary', label: 'Secundario' },
-            { value: 'gradient', label: 'Gradiente' },
-          ],
+        backgroundColor: {
+          type: 'custom',
+          label: 'Cor de Fundo',
+          render: PuckColorField,
+        },
+        textColor: {
+          type: 'custom',
+          label: 'Cor do Texto',
+          render: PuckColorField,
+        },
+        buttonColor: {
+          type: 'custom',
+          label: 'Cor do Botao',
+          render: PuckColorField,
         },
       },
       defaultProps: {
@@ -543,7 +573,9 @@ export const puckConfig: Config<Components, RootProps> = {
         description: 'Vagas limitadas para a proxima turma. Garanta a sua agora!',
         buttonText: 'Quero MINHA vaga',
         buttonLink: '#form',
-        variant: 'gradient',
+        backgroundColor: '#2563EB',
+        textColor: '#FFFFFF',
+        buttonColor: '#EA580C',
       },
       render: CTA,
     },
@@ -557,15 +589,19 @@ export const puckConfig: Config<Components, RootProps> = {
         ctaText: { type: 'text', label: 'Texto do Botao' },
         ctaLink: { type: 'text', label: 'Link' },
         backgroundColor: {
-          type: 'select',
+          type: 'custom',
           label: 'Cor de Fundo',
-          options: [
-            { value: 'white', label: 'Branco' },
-            { value: 'muted', label: 'Cinza' },
-            { value: 'primary', label: 'Primaria' },
-            { value: 'gradient', label: 'Gradiente' },
-            { value: 'dark', label: 'Escuro' },
-          ],
+          render: PuckColorField,
+        },
+        textColor: {
+          type: 'custom',
+          label: 'Cor do Texto',
+          render: PuckColorField,
+        },
+        buttonColor: {
+          type: 'custom',
+          label: 'Cor do Botao',
+          render: PuckColorField,
         },
       },
       defaultProps: {
@@ -574,17 +610,28 @@ export const puckConfig: Config<Components, RootProps> = {
         targetDate: '2026-02-28',
         ctaText: 'Garantir MINHA vaga agora',
         ctaLink: '#form',
-        backgroundColor: 'gradient',
+        backgroundColor: '#7C3AED',
+        textColor: '#FFFFFF',
+        buttonColor: '#EA580C',
       },
       render: Countdown,
     },
 
     AdmissionForm: {
-      label: 'Formulario de Admission',
+      label: 'Formulario de Admissao',
       fields: {
+        mockMode: {
+          type: 'radio',
+          label: 'Modo de Demonstracao',
+          options: [
+            { value: true, label: 'Sim (Mock)' },
+            { value: false, label: 'Nao (Orchestra)' },
+          ],
+        },
         processId: { type: 'text', label: 'ID do Processo (Orchestra)' },
-        title: { type: 'text', label: 'Titulo (opcional)' },
-        description: { type: 'textarea', label: 'Descricao (opcional)' },
+        institutionName: { type: 'text', label: 'Nome da Instituicao' },
+        title: { type: 'text', label: 'Titulo' },
+        description: { type: 'textarea', label: 'Descricao' },
         backgroundColor: {
           type: 'select',
           label: 'Cor de Fundo',
@@ -603,13 +650,27 @@ export const puckConfig: Config<Components, RootProps> = {
             { value: 'lg', label: 'Grande' },
           ],
         },
+        accentColor: {
+          type: 'custom',
+          label: 'Cor de Destaque',
+          render: PuckColorField,
+        },
+        buttonColor: {
+          type: 'custom',
+          label: 'Cor do Botao',
+          render: PuckColorField,
+        },
       },
       defaultProps: {
+        mockMode: true,
         processId: '',
+        institutionName: 'Universidade Orchestra',
         title: 'Garanta sua vaga na proxima turma',
-        description: 'Preencha o formulario e receba mais informacoes',
+        description: 'Preencha o formulario e de o primeiro passo para sua nova carreira',
         backgroundColor: 'muted',
         padding: 'lg',
+        accentColor: '#3B9EEB',
+        buttonColor: '#3B9EEB',
       },
       render: AdmissionForm,
     },
